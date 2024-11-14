@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Industrial Products</title>
+  <link rel="stylesheet" href="/styles/style.css">
+</head>
+
+<body>
+
+  <form id="product-form" action="/submit-order" method="POST">
+    <div class="product-container" id="product-container"></div>
+  </form>
+
+  <form action="/orders" method="GET">
+    <button type="submit">Show all Orders</button>
+  </form>
+
+  <script>
+    fetch('/products')
+      .then(response => response.json())
+      .then(products => {
+        const productContainer = document.getElementById("product-container");
+        const orderform = document.getElementById("product-form");
+        products.forEach((product, index) => {
+          const productCard = document.createElement("div");
+          productCard.classList.add("product-card");
+
+          productCard.innerHTML = `
+            <div class="product-image">
+              <img src="/images/index${++index}.jpg" alt="${product.name}">
+            </div>
+            <div class="product-content">
+              <div class="product-name">${product.name}</div>
+              <div class="product-article-number">Article: ${product.articleNumber}</div>
+              <div class="product-price">€${product.price}</div>
+              <div class="product-description">${product.description}</div>
+              <input type="number" class="quantity-input" name="quantity-${product.articleNumber}" min="0" max="100" placeholder="Qty">
+            </div>
+          `;
+
+          productContainer.appendChild(productCard);
+        });
+
+        const submitButton = document.createElement("button");
+        submitButton.type = "submit";
+        submitButton.textContent = "Submit Order";
+        orderform.appendChild(submitButton);
+      })
+      .catch(error => console.error('Error fetching products:', error));
+  </script>
+</body>
+
+</html>
